@@ -168,6 +168,7 @@ typedef enum {
 	String,
 	RawString,
 	ExecString,
+	VersionString,
 	HereDocumentTag,
 	HereDocumentRawTag,
 	RawHereDocument,
@@ -198,7 +199,7 @@ typedef enum {
 	Argument,
 	List,
 	Default,
-	Undefined,
+	Undefined
 } Type;
 }
 
@@ -243,7 +244,7 @@ typedef enum {
 	Ref,
 	Get,
 	Set,
-	Undefined,
+	Undefined
 } Kind;
 }
 }
