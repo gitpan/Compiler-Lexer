@@ -36,27 +36,20 @@ char *LexContext::buffer(void)
 
 void LexContext::clearBuffer(void)
 {
-	memset(token_buffer, 0, script_size);
 	buffer_idx = 0;
+	token_buffer[0] = EOL;
 }
 
 void LexContext::writeBuffer(char ch)
 {
 	token_buffer[buffer_idx] = ch;
-	buffer_idx++;
+	token_buffer[++buffer_idx] = EOL;
 }
 
 bool LexContext::existsBuffer(void)
 {
 	return token_buffer[0] != EOL;
 }
-
-//Token *LexContext::tk(void) { return ITER_CAST(Token *, itr); }
-//Token *LexContext::nextToken(void) {
-//	return ITER_CAST(Token *, itr+1);
-//}
-//void LexContext::next(void) { ++itr; }
-//bool LexContext::end(void) { return itr + 1 == tks->end(); }
 
 /*************** Lexer ***************/
 
@@ -72,13 +65,14 @@ Tokens *Lexer::tokenize(char *script)
 	Token *tk = NULL;
 	TokenManager *tmgr = ctx.tmgr;
 	ScriptManager *smgr = ctx.smgr;
-	for (; !smgr->end(); smgr->next()) {
-		char ch = smgr->currentChar();
+	char ch = smgr->currentChar();
+	for (; ch != EOL; smgr->idx++) {
+		ch = smgr->currentChar();
 		if (ch == '\n') ctx.finfo.start_line_num++;
 		if (scanner->isSkip(&ctx)) {
 			continue;
 		} else {
-			smgr->forward(ctx.progress);
+			smgr->idx += ctx.progress;
 			ctx.progress = 0;
 			if (smgr->end()) break;
 		}
@@ -123,7 +117,7 @@ Tokens *Lexer::tokenize(char *script)
 		case '(': case ')': case '{': case '}':
 		case '[': case ']': case '?': case '$':
 			tmgr->add(scanner->scanSymbol(&ctx));
-			smgr->forward(ctx.progress);
+			smgr->idx += ctx.progress;
 			ctx.progress = 0;
 			break;
 		case '\n':
