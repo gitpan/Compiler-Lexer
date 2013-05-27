@@ -1,5 +1,6 @@
 .gitignore
 Changes
+META.yml
 example/benchmark.pl
 example/bigdata.pl
 example/sample.pl
