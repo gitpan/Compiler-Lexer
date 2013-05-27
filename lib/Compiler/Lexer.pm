@@ -1,7 +1,7 @@
 package Compiler::Lexer;
-use 5.012004;
 use strict;
 use warnings;
+use 5.008_001;
 use Compiler::Lexer::Token;
 use Compiler::Lexer::Constants;
 
@@ -10,7 +10,7 @@ our @ISA = qw(Exporter);
 our %EXPORT_TAGS = ( 'all' => [ qw() ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw();
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);
 
