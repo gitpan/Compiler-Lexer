@@ -1,6 +1,12 @@
 Revision history for Compiler-Lexer
 
-0.11 : Mon May 27 16:40:00 2013
+0.13 : Tue Jun 25 16:30:00 2013
+     - changed type of return value from reference of array reference to simple array reference
+     - optimized by gperf
+     - improved memory allocation for speedup
+     - removed memory leaks during tokenize
+
+0.12 : Mon May 27 16:40:00 2013
      - added META.yml and optimized annotation methods
 
 0.10 : Mon May 27 11:50:00 2013
