@@ -8,43 +8,53 @@ Compiler::Lexer - Lexical Analyzer for Perl5
     use Data::Dumper;
 
     my $filename = $ARGV[0];
-    open(my $fh, "<", $filename) or die("$filename is not found.");
+    open my $fh, '<', $filename or die "Cannot open $filename: $!";
     my $script = do { local $/; <$fh> };
+
     my $lexer = Compiler::Lexer->new($filename);
     my $tokens = $lexer->tokenize($script);
     print Dumper $tokens;
-    print Dumper $lexer->get_used_modules($script);
 
-# DESCRIPTION
-
-Compiler::Lexer is lexical analyzer for perl5.
+    my $modules = $lexer->get_used_modules($script);
+    print Dumper $modules;
 
 # METHODS
 
 - my $lexer = Compiler::Lexer->new($filename);
 
-    Create new instance. You can create object from `$filename` in string.
+    create new instance.
+    You can create object from $filename in string.
 
 - $lexer->tokenize($script);
 
-    Get token objects includes parameter of 'name' or 'type' or 'line' and so on.
+    get token objects includes parameter of 'name' or 'type' or 'line' and so on.
     This method requires perl source code in string.
 
-- $lexer->get_used_modules($script);
+- $lexer->set\_library\_path(\['path1', 'path2' ...\])
 
-    Get names of used module. This method requires perl source code in string.
+    set libraries path for reading recursively. Default paths are @INC.
 
-# LICENSE
+- $lexer->recursive\_tokenize($script)
 
-Copyright (C) Masaaki Goshima (goccy).
+    get hash reference like { 'module\_nameA' => \[\], 'module\_nameB' => \[\] ... }.
+    This method requires per source code in string.
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+- $lexer->get\_used\_modules($script);
+
+    get names of used module.
+    This method requires perl source code in string.
 
 # AUTHOR
 
-Masaaki Goshima (goccy) <goccy@cpan.org>
+Masaaki Goshima (goccy) <goccy(at)cpan.org>
 
-# SEE ALSO
+# CONTRIBUTORS
 
-[Compiler::Parser](http://search.cpan.org/perldoc?Compiler::Parser)
+tokuhirom: Tokuhiro Matsuno
+
+# LICENSE AND COPYRIGHT
+
+Copyright (c) 2013, Masaaki Goshima (goccy). All rights reserved.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
