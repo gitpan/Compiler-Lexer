@@ -37,6 +37,7 @@ public:
 	Token *getTokenByBase(Token *base, int offset);
 	Token *getTokenByIdx(size_t idx);
 	Token *beforePreviousToken(void);
+	Token *beforePreviousToken(Token *tk);
 	Token *previousToken(void);
 	Token *previousToken(Token *tk);
 	Token *currentToken(void);
@@ -273,6 +274,7 @@ private:
 	void annotateKey(LexContext *ctx, const std::string &data, Token *tk, TokenInfo *info);
 	void annotateShortScalarDereference(LexContext *ctx, const std::string &data, Token *tk, TokenInfo *info);
 	void annotateCallDecl(LexContext *ctx, const std::string &data, Token *tk, TokenInfo *info);
+	void annotateHandleDelimiter(LexContext *ctx, const std::string &data, Token *tk, TokenInfo *info);
 	void annotateReservedKeyword(LexContext *ctx, const std::string &data, Token *tk, TokenInfo *info);
 	void annotateGlobOrMul(LexContext *ctx, const std::string &data, Token *tk, TokenInfo *info);
 	void annotateNamelessFunction(LexContext *ctx, const std::string &data, Token *tk, TokenInfo *info);

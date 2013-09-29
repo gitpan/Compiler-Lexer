@@ -58,7 +58,7 @@
    "provides" : {
       "Compiler::Lexer" : {
          "file" : "lib/Compiler/Lexer.pm",
-         "version" : "0.14"
+         "version" : "0.15"
       },
       "Compiler::Lexer::Kind" : {
          "file" : "lib/Compiler/Lexer/Constants.pm"
@@ -84,7 +84,7 @@
          "web" : "https://github.com/goccy/p5-Compiler-Lexer"
       }
    },
-   "version" : "0.14",
+   "version" : "0.15",
    "x_contributors" : [
       "tokuhirom <tokuhirom@gmail.com>",
       "Reini Urban <rurban@cpanel.net>",
