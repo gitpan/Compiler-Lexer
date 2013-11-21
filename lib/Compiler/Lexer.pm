@@ -11,11 +11,24 @@ our @ISA = qw(Exporter);
 our %EXPORT_TAGS = ( 'all' => [ qw() ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw();
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);
 
 my $inc;
+
+sub new {
+    my ($class, $args) = @_;
+    my $options = +{};
+    if (ref $args eq 'HASH') {
+        $options = $args;
+    } elsif (ref $args eq 'SCALAR') {
+        $options->{filename} = $args;
+    }
+    $options->{filename} ||= '-';
+    $options->{verbose}  ||= 0;
+    return $class->_new($options);
+}
 
 sub set_library_path {
     my ($self, $_inc) = @_;
@@ -92,10 +105,20 @@ Compiler::Lexer - Lexical Analyzer for Perl5
 
 =over
 
-=item my $lexer = Compiler::Lexer->new($filename);
+=item my $lexer = Compiler::Lexer->new($options);
 
 create new instance.
-You can create object from $filename in string.
+You can create object from $options in hash reference.
+
+=head4 options list
+
+=over
+
+=item filename
+
+=item verbose : includes token of Pod or Comment
+
+=back
 
 =item $lexer->tokenize($script);
 

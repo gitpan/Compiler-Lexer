@@ -27,7 +27,7 @@ no_index:
 provides:
   Compiler::Lexer:
     file: lib/Compiler/Lexer.pm
-    version: 0.15
+    version: 0.16
   Compiler::Lexer::Kind:
     file: lib/Compiler/Lexer/Constants.pm
   Compiler::Lexer::SyntaxType:
@@ -43,7 +43,7 @@ resources:
   bugtracker: https://github.com/goccy/p5-Compiler-Lexer/issues
   homepage: https://github.com/goccy/p5-Compiler-Lexer
   repository: git://github.com/goccy/p5-Compiler-Lexer.git
-version: 0.15
+version: 0.16
 x_contributors:
   - 'tokuhirom <tokuhirom@gmail.com>'
   - 'Reini Urban <rurban@cpanel.net>'
