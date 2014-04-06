@@ -110,28 +110,24 @@ CODE
 
 open($fh, '>', 'lib/Compiler/Lexer/Constants.pm');
 print $fh <<CODE;
-package Compiler::Lexer::TokenType;
 use strict;
 use warnings;
+
+package Compiler::Lexer::TokenType;
 use constant {
 $token_type_enums
 };
-1;
 
 package Compiler::Lexer::SyntaxType;
-use strict;
-use warnings;
 use constant {
 $syntax_type_enums
 };
-1;
 
 package Compiler::Lexer::Kind;
-use strict;
-use warnings;
 use constant {
 $token_kind_enums
 };
+
 1;
 CODE
 
@@ -173,18 +169,18 @@ Operator        	Ref                 	\\
 Operator        	Glob                	*
 Operator        	BitNot              	~
 Operator        	BitOr               	|
-Operator        	Or                  	or
+Operator        	AlphabetOr             	or
 Operator        	BitAnd              	&
-Operator        	And                 	and
+Operator        	AlphabetAnd            	and
 Operator        	BitXOr              	^
-Operator        	XOr                 	xor
+Operator        	AlphabetXOr            	xor
 Operator        	StringMul           	x
 Assign          	AddEqual            	+=
 Assign          	SubEqual            	-=
 Assign          	MulEqual            	*=
 Assign          	DivEqual            	/=
 Assign          	ModEqual            	%=
-Assign          	StringAdd           	.=
+Assign          	StringAddEqual         	.=
 Operator        	GreaterEqual        	>=
 Operator        	LessEqual           	<=
 Operator        	EqualEqual          	==
@@ -224,8 +220,8 @@ Function        	Method
 Assign          	Assign              	=
 SingleTerm        	ArraySize           	$#
 SingleTerm      	Is                  	
-SingleTerm      	IsNot               	!
-SingleTerm      	Not                 	not
+SingleTerm      	Not               	    !
+SingleTerm      	AlphabetNot            	not
 Function        	BuiltinFunc         	chomp
 Function        	BuiltinFunc         	chop
 Function        	BuiltinFunc         	chr
@@ -430,13 +426,13 @@ DESTROY         	DESTROY             	DESTROY
 Handle          	STDIN               	STDIN
 Handle          	STDOUT              	STDOUT
 Handle          	STDERR              	STDERR
-Redo            	Redo                	redo
-Next            	Next                	next
-Last            	Last                	last
-Goto            	Goto                	goto
-Continue        	Continue            	continue
+Control            	Redo                	redo
+Control            	Next                	next
+Control            	Last                	last
+Control            	Goto                	goto
+Control             Continue                continue
 Do              	Do                  	do
-Break           	Break               	break
+Control           	Break               	break
 Handle          	Handle              	-b
 Handle          	Handle              	-c
 Handle          	Handle              	-d
@@ -490,6 +486,7 @@ Symbol          	RightBracket        	]
 Modifier        	ArrayDereference    	@{
 Modifier        	HashDereference     	%{
 Modifier        	ScalarDereference   	${
+Modifier            CodeDereference         &{
 Modifier        	ShortScalarDereference	
 Modifier        	ShortArrayDereference	@$
 Modifier        	ShortHashDereference	%$
