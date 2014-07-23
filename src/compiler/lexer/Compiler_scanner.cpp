@@ -55,6 +55,39 @@ Token *Scanner::scanQuote(LexContext *ctx, char quote)
 {
 	TokenManager *tmgr = ctx->tmgr;
 	ScriptManager *smgr = ctx->smgr;
+	char prev_ch = smgr->previousChar();
+	Token *prev_token = tmgr->lastToken();
+	if (prev_token && prev_token->info.type == TokenType::RegExp) {
+		return scanSymbol(ctx);
+	}
+	if (isalnum(prev_ch) || prev_ch == '_') {
+		char *token = ctx->buffer();
+		TokenInfo info = tmgr->getTokenInfo(token);
+		char cur_ch = smgr->currentChar();
+		if (cur_ch == '\'' && info.type == TokenType::Undefined) {
+			Token *namespace_tk = tmgr->new_Token(token, ctx->finfo);
+			namespace_tk->info = tmgr->getTokenInfo(TokenType::Namespace);
+			tmgr->add(namespace_tk);
+			ctx->clearBuffer();
+			
+			ctx->writeBuffer(cur_ch);
+			Token *namespace_resolver = tmgr->new_Token(ctx->buffer(), ctx->finfo);
+			namespace_resolver->info  = tmgr->getTokenInfo(TokenType::NamespaceResolver);
+			ctx->clearBuffer();
+			return namespace_resolver;
+		} else if (info.kind == TokenKind::RegPrefix || info.kind == TokenKind::RegReplacePrefix) {
+			Token *tk = tmgr->new_Token(token, ctx->finfo);
+			tk->info = info;
+			tmgr->add(tk);
+			ctx->clearBuffer();
+			return scanSymbol(ctx);
+		} else {
+			Token *tk = tmgr->new_Token(token, ctx->finfo);
+			tk->info = info;
+			tmgr->add(tk);
+			ctx->clearBuffer();
+		}
+	}
 	for (smgr->next(); !smgr->end(); smgr->next()) {
 		char ch = smgr->currentChar();
 		if (ch == '\n') {
@@ -70,6 +103,7 @@ Token *Scanner::scanQuote(LexContext *ctx, char quote)
 			ctx->writeBuffer(ch);
 		}
 	}
+	if (smgr->end()) smgr->back();
 	Token *prev_tk = ctx->tmgr->lastToken();
 	int idx = ctx->tmgr->size() - 2;
 	string prev_data = (prev_tk) ? string(prev_tk->_data) : "";
@@ -231,7 +265,14 @@ bool Scanner::isRegexDelim(Token *prev_token, char symbol)
 		(symbol != '-' && symbol != '=' && symbol != ',' && symbol != ')') &&
 		regex_prefix_map.find(prev_tk) != regex_prefix_map.end()) {
 		return true;
+	} else if (regex_delim == 0 && prev_token && 
+			   (prev_token->info.kind == TokenKind::RegPrefix || prev_token->info.kind == TokenKind::RegReplacePrefix)) {
+		return true;
 	}
+	TokenType::Type prev_type = (prev_token) ? prev_token->info.type : TokenType::Undefined;
+	if (prev_type == TokenType::RawString ||
+		prev_type == TokenType::String    ||
+		prev_type == TokenType::ExecString) return false;
 	if (symbol != '/') return false;
 	if (!prev_token) return true;
 	if (symbol == '/' && (prev_tk == "xor" || prev_tk == "and")) return true;
@@ -253,14 +294,16 @@ Token *Scanner::scanPrevSymbol(LexContext *ctx, char )
 	char *token = ctx->buffer();
 	TokenManager *tmgr = ctx->tmgr;
 	Token *ret = NULL;
-	if (isRegexStartDelim(ctx, regex_prefix_map)) {
+	Token *prev_tk = ctx->tmgr->lastToken();
+	bool isPointer = (prev_tk && prev_tk->info.type == TokenType::Pointer) ? true : false;
+	if (!isPointer && isRegexStartDelim(ctx, regex_prefix_map)) {
 		//RegexPrefix
 		ret = ctx->tmgr->new_Token(token, ctx->finfo);
 		ret->info = tmgr->getTokenInfo(token);
 		regex_delim = getRegexDelim(ctx);
 		isRegexStarted = true;
 		skipFlag = true;
-	} else if (isRegexStartDelim(ctx, regex_replace_map)) {
+	} else if (!isPointer && isRegexStartDelim(ctx, regex_replace_map)) {
 		//ReplaceRegexPrefix
 		ret = ctx->tmgr->new_Token(token, ctx->finfo);
 		ret->info = tmgr->getTokenInfo(token);
@@ -271,7 +314,6 @@ Token *Scanner::scanPrevSymbol(LexContext *ctx, char )
 		skipFlag = true;
 	} else if (isPrototype(ctx)) {
 		ret = ctx->tmgr->new_Token(token, ctx->finfo);
-
 		isPrototypeStarted = true;
 		skipFlag = true;
 	} else {
@@ -295,9 +337,11 @@ Token *Scanner::scanCurSymbol(LexContext *ctx, char symbol)
 	Token *ret = NULL;
 	TokenManager *tmgr = ctx->tmgr;
 	Token *prev_tk = ctx->tmgr->lastToken();
+	string prev_data = (prev_tk) ? prev_tk->_data : "";
 	int idx = ctx->tmgr->size() - 2;
 	string prev_before = (idx >= 0) ? string(ctx->tmgr->beforeLastToken()->_data) : "";
-	if (prev_before != "sub" && isRegexDelim(prev_tk, symbol)) {
+	if ((prev_before != "sub" && isRegexDelim(prev_tk, symbol)) ||
+		(prev_data   == "{"   && symbol == '/')) {
 		if (!isRegexEndDelim(ctx)) {
 			regex_delim = getRegexDelim(ctx);
 			isRegexStarted = true;

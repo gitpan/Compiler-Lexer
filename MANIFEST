@@ -37,8 +37,14 @@ src/compiler/util/Compiler_util.cpp
 src/typemap
 t/Lexer.t
 t/format.t
+t/issue_32.t
+t/issue_35.t
+t/issue_38.t
+t/issue_39.t
+t/issue_40.t
 t/issue_reports.t
 t/package.t
+t/perl6.t
 t/recursive_tokenize.t
 t/verbose.t
 typemap
